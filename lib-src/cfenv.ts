@@ -10,6 +10,7 @@ export interface Options {
   vcapFile?: string;
   vcap?: VCAP;
   name?: string;
+  protocol?: string;
 }
 
 export declare type Services = { [serviceName: string]: Service[] };
@@ -27,6 +28,7 @@ export interface Service {
 export interface App {
   name: string;
   host: string;
+  uris: string[];
 }
 
 interface Manifest {
@@ -177,7 +179,7 @@ export class AppEnv {
         case "auth":
           let userid = value[0];
           let password = value[1];
-          purl.auth = credentials[userid] + ":" + credentials[password];
+          purl.auth = `${credentials[userid]}:${credentials[password]}`;
           break;
         case "hash":
           purl.hash = credentials[key];
@@ -237,7 +239,7 @@ export function getApp(appEnv: AppEnv, options: Options) : App {
       throwError(`env var VCAP_APPLICATION is not JSON: ${appStr}`);
     }
   }
-  return {name: "ignoreme", host: "localhost"};
+  return {name: "ignoreme", host: "localhost", uris: ["localhost"]};
 }
 
 export function getServices(appEnv: AppEnv, options: Options) : Services {
@@ -324,7 +326,34 @@ export function getBind(appEnv: AppEnv) : string {
 }
 
 export function getURLs(appEnv: AppEnv, options: Options) : string[] {
-  return [];
+
+  let uris: string[] = [];
+
+  if (appEnv.app) {
+    uris = appEnv.app.uris;
+  }
+
+  if (appEnv.isLocal) {
+    uris = [ `localhost:${appEnv.port}` ];
+  }
+
+  if (uris.length == 0) {
+    uris = ["localhost"];
+  }
+
+  let protocol = options.protocol
+
+  if (!protocol) {
+    if (appEnv.isLocal) {
+      protocol = "http:"
+    } else {
+      protocol = "https:"
+    }
+  }
+
+  return uris.map(uri => {
+    return `${protocol}//${uri}`
+  });
 }
 
 

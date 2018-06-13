@@ -2,6 +2,7 @@ export interface Options {
     vcapFile?: string;
     vcap?: VCAP;
     name?: string;
+    protocol?: string;
 }
 export declare type Services = {
     [serviceName: string]: Service[];
@@ -19,6 +20,7 @@ export interface Service {
 export interface App {
     name: string;
     host: string;
+    uris: string[];
 }
 export declare function getAppEnv(options?: Options): AppEnv;
 export declare class AppEnv {
