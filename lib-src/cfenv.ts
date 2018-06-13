@@ -49,18 +49,49 @@ function throwError(message: string) {
   throw new Error(msg);
 }
 
+/**
+  * Discover application information from $VCAP_APPLICATION / $VCAP_SERVICES.
+  *
+  * @param options Overrides for local usage outside of Cloud Foundry.
+  */
 export function getAppEnv(options?: Options) {
   return new AppEnv(options);
 }
 
 export class AppEnv {
+  /**
+   * Does the application think its running locally, or is it running within Cloud Foundry (false).
+   */
   isLocal = false;
+
+  /**
+   * All information provided to application about itself within this Cloud Foundry instance.
+   */
   app: App;
+  /**
+   * The collection of service instances, grouped by service type, currently bound to application.
+   */
   services: Services;
+
+  /**
+   * Name of applicaition within Cloud Foundry development space.
+   */
   name: string;
+  /**
+   * Port for application to listen for incoming traffic.
+   */
   port: number;
+  /**
+   * Host address for application to bind to for incoming traffic.
+   */
   bind: string;
+  /**
+   * List of hostnames currently routing traffic to application.
+   */
   urls: string[];
+  /**
+   * One of the hostnames currently routing traffic to application.
+   */
   url: string;
 
   public constructor(options?: Options) {
@@ -110,6 +141,22 @@ export class AppEnv {
     options.vcap = vcap
   }
 
+  /**
+    * Used by JSON.stringify() to display AppEnv in JSON format.
+    */
+  public toJSON(): any {
+    return {
+      app: this.app,
+      services: this.services,
+      isLocal: this.isLocal,
+      name: this.name,
+      port: this.port,
+      bind: this.bind,
+      urls: this.urls,
+      url: this.url
+    };
+  };
+
   public getServices(): { [name: string]: Service } {
     let result : { [name: string]: Service } = {}
 
@@ -145,7 +192,7 @@ export class AppEnv {
     return null;
 }
 
-  public getServiceURL(spec : RegExp | string, replacements?: {[key: string]: string}) : string {
+  public getServiceURL(spec : RegExp | string, replacements?: {[key: string]: any}) : string {
     let url: string;
 
     if (replacements == null) {
@@ -360,7 +407,7 @@ export function getURLs(appEnv: AppEnv, options: Options) : string[] {
 //-------------------------------------------------------------------------------
 // Copyright IBM Corp. 2014
 // Copyright Patrick Mueller 2015, 2017
-// Copyright Patrick Mueller, Dr Nic Williams, 2018
+// Copyright Patrick Mueller, Dr Nic Williams, 2018 (since rewrite into TypeScript)
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
