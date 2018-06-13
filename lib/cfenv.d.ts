@@ -1,7 +1,7 @@
 export interface Options {
-    vcapFile: string;
-    vcap: VCAP;
-    name: string;
+    vcapFile?: string;
+    vcap?: VCAP;
+    name?: string;
 }
 export declare type Services = {
     [serviceName: string]: Service[];
@@ -20,7 +20,7 @@ export interface App {
     name: string;
     host: string;
 }
-export declare function getAppEnv(options: Options): AppEnv;
+export declare function getAppEnv(options?: Options): AppEnv;
 export declare class AppEnv {
     isLocal: boolean;
     app: App;
@@ -30,7 +30,7 @@ export declare class AppEnv {
     bind: string;
     urls: string[];
     url: string;
-    constructor(options: Options);
+    constructor(options?: Options);
     private getVcapFromFile;
     toJSON(): string;
     getServices(): {

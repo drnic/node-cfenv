@@ -7,9 +7,9 @@ import * as ports from "./ports";
 import * as yaml from "js-yaml";
 
 export interface Options {
-  vcapFile: string;
-  vcap: VCAP;
-  name: string;
+  vcapFile?: string;
+  vcap?: VCAP;
+  name?: string;
 }
 
 export declare type Services = { [serviceName: string]: Service[] };
@@ -47,7 +47,7 @@ function throwError(message: string) {
   throw new Error(msg);
 }
 
-export function getAppEnv(options: Options) {
+export function getAppEnv(options?: Options) {
   return new AppEnv(options);
 }
 
@@ -61,13 +61,15 @@ export class AppEnv {
   urls: string[];
   url: string;
 
-  public constructor(options: Options) {
+  public constructor(options?: Options) {
     try {
       JSON.parse(process.env.VCAP_APPLICATION || "");
     }
     catch (err) {
       this.isLocal = true;
     }
+
+    options = options || {};
 
     if (this.isLocal) {
       this.getVcapFromFile(options);
@@ -230,7 +232,7 @@ export function getApp(appEnv: AppEnv, options: Options) : App {
         return envValue;
       }
 
-      if (options.vcap.application) {
+      if (options.vcap && options.vcap.application) {
         return options.vcap.application;
       }
       return envValue;
@@ -253,7 +255,7 @@ export function getServices(appEnv: AppEnv, options: Options) : Services {
         return envValue;
       }
 
-      if (options.vcap.services) {
+      if (options.vcap && options.vcap.services) {
         return options.vcap.services;
       }
       return envValue;
