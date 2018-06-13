@@ -108,10 +108,6 @@ export class AppEnv {
     options.vcap = vcap
   }
 
-  public toJSON(): string {
-    return JSON.stringify(this);
-  }
-
   public getServices(): { [name: string]: Service } {
     let result : { [name: string]: Service } = {}
 

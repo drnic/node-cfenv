@@ -32,7 +32,6 @@ export declare class AppEnv {
     url: string;
     constructor(options?: Options);
     private getVcapFromFile;
-    toJSON(): string;
     getServices(): {
         [name: string]: Service;
     };

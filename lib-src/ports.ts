@@ -19,7 +19,7 @@ export function getPort(name: string, data?: any) : number {
 
   data = data || {};
   var map = read_json(ports_file);
-  var max_port = module.exports.base_port;
+  var max_port = base_port;
 
   for (var port_m in map) {
     let port_n = parseInt(port_m, 10);
@@ -39,7 +39,7 @@ export function getPort(name: string, data?: any) : number {
   data.name = name;
   map[new_port] = data;
 
-  write_json(module.exports.ports_file, map);
+  write_json(ports_file, map);
   return new_port;
 };
 
@@ -65,5 +65,5 @@ function getPortsFile() : string {
         homedir = "USERPROFILE";
       }
   }
-  return path.join(process.env[homedir] || "~",".ports.json");
+  return path.join(process.env[homedir] || "~", ".ports.json");
 };
